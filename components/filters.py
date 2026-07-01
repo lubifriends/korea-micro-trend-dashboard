@@ -36,7 +36,7 @@ def render_filters(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
         "출처",
         sources,
         default=sources,
-        help="Google Trends, 뉴스, YouTube 같은 수집 출처입니다.",
+        help="Google Trends, Google News, NAVER DataLab 같은 수집 출처입니다.",
     )
 
     sort_label = st.sidebar.selectbox("정렬 기준", list(SORT_OPTIONS))
@@ -52,4 +52,3 @@ def render_filters(df: pd.DataFrame) -> tuple[pd.DataFrame, int]:
         filtered[sort_column] = pd.to_datetime(filtered[sort_column], errors="coerce")
     filtered = filtered.sort_values(sort_column, ascending=ascending).head(top_n)
     return filtered.reset_index(drop=True), top_n
-

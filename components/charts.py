@@ -10,32 +10,38 @@ import streamlit as st
 COLORS = ["#5eead4", "#60a5fa", "#fbbf24", "#f472b6", "#a78bfa", "#fb7185"]
 
 
-def _style(fig):
+def _style(fig, theme_mode: str):
+    is_light = theme_mode == "주간"
     fig.update_layout(
-        template="plotly_dark",
+        template="plotly_white" if is_light else "plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         margin=dict(l=20, r=20, t=45, b=20),
         legend_title_text="",
+        font=dict(color="#334155" if is_light else "#cbd5e1"),
+        hoverlabel=dict(bgcolor="#ffffff" if is_light else "#111827"),
     )
     return fig
 
 
-def render_charts(df: pd.DataFrame, history: pd.DataFrame) -> None:
+def render_charts(df: pd.DataFrame, history: pd.DataFrame, theme_mode: str = "시스템") -> None:
     if df.empty:
         return
 
     left, right = st.columns(2, gap="medium")
     category_counts = df.groupby("category", as_index=False).size().rename(columns={"size": "키워드 수"})
+    category_counts = category_counts.sort_values("키워드 수")
     category_fig = px.bar(
         category_counts,
-        x="category",
-        y="키워드 수",
+        x="키워드 수",
+        y="category",
         color="category",
         title="카테고리별 분포",
         color_discrete_sequence=COLORS,
+        orientation="h",
     )
-    left.plotly_chart(_style(category_fig), width="stretch")
+    category_fig.update_traces(marker_line_width=0, hovertemplate="%{y}: %{x}개<extra></extra>")
+    left.plotly_chart(_style(category_fig, theme_mode), width="stretch")
 
     source_rows = df[["source"]].copy()
     source_rows["source"] = source_rows["source"].fillna("").str.split(" | ", regex=False)
@@ -49,7 +55,8 @@ def render_charts(df: pd.DataFrame, history: pd.DataFrame) -> None:
         title="출처별 분포",
         color_discrete_sequence=COLORS,
     )
-    right.plotly_chart(_style(source_fig), width="stretch")
+    source_fig.update_traces(textposition="inside", textinfo="percent+label")
+    right.plotly_chart(_style(source_fig, theme_mode), width="stretch")
 
     timeline = history.copy()
     if timeline.empty:
@@ -67,4 +74,5 @@ def render_charts(df: pd.DataFrame, history: pd.DataFrame) -> None:
         title="시간대별 포착 키워드 수 (최근 스냅샷)",
         color_discrete_sequence=["#5eead4"],
     )
-    st.plotly_chart(_style(time_fig), width="stretch")
+    time_fig.update_traces(line_width=3, marker_size=7, fill="tozeroy", fillcolor="rgba(94,234,212,.10)")
+    st.plotly_chart(_style(time_fig, theme_mode), width="stretch")

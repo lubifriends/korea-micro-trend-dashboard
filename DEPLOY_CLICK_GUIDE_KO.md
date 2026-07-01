@@ -247,31 +247,31 @@ korea-micro-trend
 2. `Python version` 선택 메뉴를 누릅니다.
 3. `3.11`을 선택합니다.
 
-## YouTube API 키가 아직 없는 경우
+## NAVER API HUB 키가 아직 없는 경우
 
-`Secrets` 입력칸은 비워 둬도 됩니다. 앱은 YouTube 샘플 데이터를 사용합니다.
+`Secrets` 입력칸은 비워 둬도 됩니다. Google 공개 RSS 실데이터는 수집되고 10대·20대 반응만 `데이터 없음`으로 표시됩니다.
 
-## YouTube API 키가 있는 경우
+## NAVER API HUB 키가 있는 경우
 
 `Secrets` 입력칸에 아래처럼 입력합니다. 따옴표 안의 값만 실제 키로 바꿉니다.
 
 ```toml
-YOUTUBE_API_KEY = "여기에_실제_키"
+NAVER_API_HUB_CLIENT_ID = "여기에_Client_ID"
+NAVER_API_HUB_CLIENT_SECRET = "여기에_Client_Secret"
 ```
 
 나중에 다른 API 키도 생기면 다음 형식으로 추가합니다.
 
 ```toml
-YOUTUBE_API_KEY = "실제_YouTube_키"
-NAVER_CLIENT_ID = "실제_네이버_ID"
-NAVER_CLIENT_SECRET = "실제_네이버_비밀값"
+NAVER_API_HUB_CLIENT_ID = "실제_Client_ID"
+NAVER_API_HUB_CLIENT_SECRET = "실제_Client_Secret"
 OPENAI_API_KEY = "실제_OpenAI_키"
 GEMINI_API_KEY = "실제_Gemini_키"
 ```
 
 주의:
 
-- `YOUTUBE_API_KEY=값`이 아니라 TOML 형식인 `YOUTUBE_API_KEY = "값"`으로 씁니다.
+- `NAVER_API_HUB_CLIENT_ID=값`이 아니라 TOML 형식인 `NAVER_API_HUB_CLIENT_ID = "값"`으로 씁니다.
 - 실제 키를 GitHub의 코드 파일이나 README에 쓰면 안 됩니다.
 - Secrets 화면에 저장한 값은 일반 방문자에게 보이지 않습니다.
 
@@ -346,13 +346,14 @@ Python: 3.11
 정상 예:
 
 ```toml
-YOUTUBE_API_KEY = "abc123"
+NAVER_API_HUB_CLIENT_ID = "abc123"
+NAVER_API_HUB_CLIENT_SECRET = "secret456"
 ```
 
 잘못된 예:
 
 ```text
-YOUTUBE_API_KEY=abc123
+NAVER_API_HUB_CLIENT_ID=abc123
 ```
 
 ## 앱은 열리지만 실시간 데이터가 안 나옴
@@ -405,4 +406,3 @@ YOUTUBE_API_KEY=abc123
 - [ ] Streamlit File path는 `app.py`다.
 - [ ] Python은 `3.11`이다.
 - [ ] 배포된 주소가 `.streamlit.app`으로 끝난다.
-

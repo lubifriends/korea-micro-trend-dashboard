@@ -55,7 +55,7 @@ def append_history(df: pd.DataFrame, keep_rows: int = 5000) -> None:
         return
 
     DATA_DIR.mkdir(parents=True, exist_ok=True)
-    columns = ["snapshot_time", "keyword", "category", "source", "score"]
+    columns = ["snapshot_time", "keyword", "category", "source", "score", "data_mode"]
     snapshot = df.copy()
     snapshot["snapshot_time"] = pd.Timestamp.now(tz="Asia/Seoul").isoformat()
     for column in columns:
@@ -65,14 +65,17 @@ def append_history(df: pd.DataFrame, keep_rows: int = 5000) -> None:
     combined.tail(keep_rows).to_csv(HISTORY_PATH, index=False, encoding="utf-8-sig")
 
 
-def bootstrap_from_sample() -> pd.DataFrame:
-    """첫 실행 시 API가 없어도 샘플로 바로 화면을 보여 줍니다."""
+def load_live_current() -> pd.DataFrame:
+    """실데이터로 저장된 행만 읽습니다. 과거 샘플 파일은 자동으로 무시합니다."""
     current = load_current()
-    if not current.empty:
-        return current
-    sample = load_sample()
-    if not sample.empty:
-        save_current(sample)
-        append_history(sample)
-    return sample
+    if current.empty or "data_mode" not in current.columns:
+        return pd.DataFrame()
+    return current[current["data_mode"].astype(str) == "live"].copy()
 
+
+def load_live_history() -> pd.DataFrame:
+    """시간 차트에도 샘플 기록이 섞이지 않게 실데이터만 반환합니다."""
+    history = load_history()
+    if history.empty or "data_mode" not in history.columns:
+        return pd.DataFrame()
+    return history[history["data_mode"].astype(str) == "live"].copy()

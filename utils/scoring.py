@@ -122,6 +122,9 @@ def merge_and_score(new_rows: list[dict[str, Any]], previous: pd.DataFrame | Non
         category_candidates = [value for value in category_candidates if value and value != "기타"]
         category = Counter(category_candidates).most_common(1)[0][0] if category_candidates else guess_category(keyword, contexts)
         summary = summaries[0] if summaries else f"{sources or '공개 피드'}에서 새롭게 포착된 키워드입니다."
+        teen_index = max((_safe_number(row.get("teen_index", 0)) for row in rows), default=0.0)
+        twenties_index = max((_safe_number(row.get("twenties_index", 0)) for row in rows), default=0.0)
+        naver_period = next((str(row.get("naver_period")) for row in rows if row.get("naver_period")), "")
 
         results.append({
             "keyword": keyword,
@@ -148,6 +151,10 @@ def merge_and_score(new_rows: list[dict[str, Any]], previous: pd.DataFrame | Non
                 f"+ 링크 {link_score:.1f} + 반복 {repeat_score:.1f} "
                 f"- 경과시간 {age_penalty:.1f} - 일반어/스팸 {spam_penalty:.1f}"
             ),
+            "teen_index": round(teen_index, 1),
+            "twenties_index": round(twenties_index, 1),
+            "naver_period": naver_period,
+            "data_mode": "live",
         })
 
     return pd.DataFrame(results).sort_values("score", ascending=False).reset_index(drop=True) if results else pd.DataFrame()
